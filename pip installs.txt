@@ -1,0 +1,8 @@
+
+pip install --user google-auth-oauthlib
+pip install --upgrade google-api-python-client
+
+(dont have to do these two ^ if you do this one v)
+pip install –upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+pip install pdfminer.six

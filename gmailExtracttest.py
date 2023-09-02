@@ -1,21 +1,3 @@
-# https://youtu.be/K21BSZPFIjQ
-"""
-Extract selected mails from your gmail account
-
-1. Make sure you enable IMAP in your gmail settings
-(Log on to your Gmail account and go to Settings, See All Settings, and select
- Forwarding and POP/IMAP tab. In the "IMAP access" section, select Enable IMAP.)
-
-2. If you have 2-factor authentication, gmail requires you to create an application
-specific password that you need to use. 
-Go to your Google account settings and click on 'Security'.
-Scroll down to App Passwords under 2 step verification.
-Select Mail under Select App. and Other under Select Device. (Give a name, e.g., python)
-The system gives you a password that you need to use to authenticate from python.
-
-"""
-
-# Importing libraries
 import imaplib
 import email
 
