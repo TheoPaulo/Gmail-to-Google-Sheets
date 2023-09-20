@@ -1,71 +1,82 @@
 import re 
-from pdfminer.high_level import extract_pages, extract_text
+from pdfminer.high_level import extract_text
+from googleSheetsWriter import googleSheetsWriter
 
-text = extract_text("/home/theopaulo/Documents/PythonFiles/GithubProjects/Gmail-to-Google-Sheets/report.pdf")
+#report path = "/home/theopaulo/Documents/PythonFiles/GithubProjects/Gmail-to-Google-Sheets/report.pdf"
 
-textList = text.split()
-print(textList)
 
-date = "Date = {} {}".format(textList[0], textList[1])
+def pdfExtractor(filePath: str):
+    text = extract_text(filePath)
+    textList = text.split()
+    date = "{} {} {}".format(textList[0], textList[1], textList[3])
+
+    debitCardRow1 = textList[51]
+
+    debitCardRow2 = textList[56]
+
+    debitCardRow3 = textList[101]
+
+    creditCardRow1 = textList[49]
+
+    creditCardRow2 = textList[54]
+
+    creditCardRow3 = textList[99]
+
+    cashRow1 = textList[50]
+
+    cashRow2 = textList[55]
+
+    cashRow3 = textList[100]
+
+    grossTotal = textList[20]
+
+    refunds = textList[55]
+
+    transactionCount = textList[39]
+
+    averageTicket = textList[47]
+
+    itemCount = textList[52]
+
+    itemsPerTicket = textList[97]
+
+    return([[date, debitCardRow1, creditCardRow1, cashRow1, grossTotal, refunds, transactionCount, averageTicket, itemCount, itemsPerTicket],
+                ["", debitCardRow2, creditCardRow2, cashRow2],
+                ["", debitCardRow3, creditCardRow3, cashRow3]
+            ])
+
+if __name__ == "__main__":
+    googleSheetsWriter(pdfExtractor("/home/theopaulo/Documents/PythonFiles/GithubProjects/Gmail-to-Google-Sheets/report.pdf"))
+
+#code for if you want data to be in the same cell
+"""
+date = "{} {} {}".format(textList[0], textList[1], textList[3])
 print(date)
 
-debitCard = "Debit Card = {} {} {}".format(textList[51], textList[56], textList[101])
+debitCard = "{}\n{}\n{}".format(textList[51], textList[56], textList[101])
 print(debitCard)
 
-creditCard = "Credit Card = {} {} {}".format(textList[49], textList[54], textList[99])
+creditCard = "{}\n{}\n{}".format(textList[49], textList[54], textList[99])
 print(creditCard)
 
-cash = "Cash = {} {} {}".format(textList[50], textList[55], textList[100])
+cash = "{}\n{}\n{}".format(textList[50], textList[55], textList[100])
 print(cash)
 
-grossTotal = "Gross Total = {}".format(textList[20])
+grossTotal = "{}".format(textList[20])
 print(grossTotal)
 
-refunds = "Refunds = {}".format(textList[55])
+refunds = "{}".format(textList[55])
 print(refunds)
 
-transactionCount = "Transaction Count = {}".format(textList[39])
+transactionCount = "{}".format(textList[39])
 print(transactionCount)
 
-averageTicket = "Average Ticket = {}".format(textList[47])
+averageTicket = "{}".format(textList[47])
 print(averageTicket)
 
-itemCount = "Item Count = {}".format(textList[52])
+itemCount = "{}".format(textList[52])
 print(itemCount)
 
-itemsPerTicket = "Items Per Ticket = {}".format(textList[97])
+itemsPerTicket = "{}".format(textList[97])
 print(itemsPerTicket)
-
-print(textList.index("1.79"))
-
-
-
 """
-print(text.replace("\n", " "))
-
-matches2 = re.compile(r"(\d+|\d{1,3}(,\d{3})*)(\.\d+)?").findall(text)
-
-pattern = re.compile(r"[0-9]+.{1}[0-9]{2}").findall(text)
-
-matches1 = re.search('[0-9]{1,3}(,[0-9]{3})*\.[0-9]+', text)
-
-
-match = re.search(r"\d{1,3}(,\d{3})*\.\d{2}", text)
-i = 1
-
-print(match)
-
-while match:
-    print("\nMatched string is", match.group(0))
-    print("and it is " + str(i) + "in the list")
-    i += 1
-    
- 
-    # suffix to find the rest of the string.
-    text = text[(match.end()):]
-    match = re.search(r"\d{1,3}(,\d{3})*\.\d{2}", text)
-
-
-#print(pattern)
-"""
-

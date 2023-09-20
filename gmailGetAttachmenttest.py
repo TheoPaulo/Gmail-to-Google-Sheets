@@ -30,100 +30,80 @@ def searchSinceTodayString():
 def searchSubjectString(Subject):
     return 'SUBJECT \"' + Subject + '\"'
 
-with open("credentials.yml") as f:
-    content = f.read()
-    
-# from credentials.yml import user name and password
-my_credentials = yaml.load(content, Loader=yaml.FullLoader)
+def getReportAttachmentFromEmail():
+    with open("mailcredentials.yml") as f:
+        content = f.read()
+        
+    # from credentials.yml import user name and password
+    my_credentials = yaml.load(content, Loader=yaml.FullLoader)
 
-#Load the user name and passwd from yaml file
-user, password = my_credentials["user"], my_credentials["password"]
+    #Load the user name and passwd from yaml file
+    user, password = my_credentials["user"], my_credentials["password"]
 
-#URL for IMAP connection
-imap_url = 'imap.gmail.com'
+    #URL for IMAP connection
+    imap_url = 'imap.gmail.com'
 
-# Connection with GMAIL using SSL
-my_mail = imaplib.IMAP4_SSL(imap_url)
+    # Connection with GMAIL using SSL
+    my_mail = imaplib.IMAP4_SSL(imap_url)
 
-# Log in using your credentials
-my_mail.login(user, password)
+    # Log in using your credentials
+    my_mail.login(user, password)
 
-# Select the Inbox to fetch messages
-my_mail.select('Inbox')
+    # Select the Inbox to fetch messages
+    my_mail.select('Inbox')
 
-#Define Key and Value for email search
-#For other keys (criteria): https://gist.github.com/martinrusev/6121028#file-imap-search
-#key = "SUBJECT"
-#key = 'FROM'
-#key = 'SINCE'
+    #Define Key and Value for email search or define criteria for email search
+    #key = 'SINCE'
+    #value = date.today().strftime("%d-%b-%Y")
 
-#value = '"THEO PAULO, see how to help boost your security level"'
-#value = 'customerservice@emcom.bankofamerica.com'
-#value = str(date.today())
-#value = date.today().strftime("%d-%b-%Y")
-#print(type(value))
+    #For other keys (criteria): https://gist.github.com/martinrusev/6121028#file-imap-search
 
-#criteria = '(SUBJECT "THEO PAULO, see how to help boost your security level")'
-criteria = "(" + searchSinceTodayString() + " " + searchSubjectString("Attachment Test Email") + ")"
+    #Define criteria for email search
 
-#_, data = my_mail.search(None, key, value)  #Search for emails with specific key and value
-_, data = my_mail.search(None, criteria)
+    criteria = "(" + searchSinceTodayString() + " " + searchSubjectString("Attachment Test Email") + ")"
 
-mail_id_list = data[0].split()  #IDs of all emails that we want to fetch 
+    #_, data = my_mail.search(None, key, value)  #Search for emails with specific key and value
+    _, data = my_mail.search(None, criteria)
 
-msgs = [] # empty list to capture all messages
-#Iterate through messages and extract data into the msgs list
-for num in mail_id_list:
-    typ, data = my_mail.fetch(num, '(RFC822)') #RFC822 returns whole message (BODY fetches just body)
-    msgs.append(data)
+    mail_id_list = data[0].split()  #IDs of all emails that we want to fetch 
 
-#Now we have all messages, but with a lot of details
-#Let us extract the right text and print on the screen
+    msgs = [] # empty list to capture all messages
+    #Iterate through messages and extract data into the msgs list
+    for num in mail_id_list:
+        typ, data = my_mail.fetch(num, '(RFC822)') #RFC822 returns whole message (BODY fetches just body)
+        msgs.append(data)
 
-#In a multipart e-mail, email.message.Message.get_payload() returns a 
-# list with one item for each part. The easiest way is to walk the message 
-# and get the payload on each part:
-# https://stackoverflow.com/questions/1463074/how-can-i-get-an-email-messages-text-content-using-python
+    #Now we have all messages, but with a lot of details
+    #Let us extract the right text and print on the screen
 
-# NOTE that a Message object consists of headers and payloads.
+    #In a multipart e-mail, email.message.Message.get_payload() returns a 
+    # list with one item for each part. The easiest way is to walk the message 
+    # and get the payload on each part:
+    # https://stackoverflow.com/questions/1463074/how-can-i-get-an-email-messages-text-content-using-python
 
-for msg in msgs[::-1]:
-    for response_part in msg:
-        if type(response_part) is tuple:
-            my_msg=email.message_from_bytes((response_part[1]))
-            for part in my_msg.walk():
-                if part.get_content_maintype() == 'multipart':
-                    continue
-                if part.get('Content-Disposition') is None:
-                    continue
+    # NOTE that a Message object consists of headers and payloads.
 
-                filename = part.get_filename()
-                att_path = os.path.join("/home/theopaulo/Documents/PythonFiles/GithubProjects/Gmail-to-Google-Sheets", filename)
+    for msg in msgs[::-1]:
+        for response_part in msg:
+            if type(response_part) is tuple:
+                my_msg=email.message_from_bytes((response_part[1]))
+                for part in my_msg.walk():
+                    if part.get_content_maintype() == 'multipart':
+                        continue
+                    if part.get('Content-Disposition') is None:
+                        continue
 
-                if not os.path.isfile(att_path):
-                    fp = open(att_path, 'wb')
-                    fp.write(part.get_payload(decode=True))
-                    fp.close()
-            #filename = my_msg.get_filename()
-            #print(filename)
-            #print(type(filename))
-            #my_msg.get_filename()
-            #my_msg.get_payload
-            #print(my_msg['filename'])
-            #print(my_msg['f'])
-            #att_path = os.path.join("/Downloads", filename)
+                    filename = part.get_filename()
+                    att_path = os.path.join("/home/theopaulo/Documents/PythonFiles/GithubProjects/Gmail-to-Google-Sheets", filename)
 
-            #if not os.path.isfile(att_path):
-            #    fp = open(att_path, 'wb')
-            #    fp.write(my_msg.get_payload(decode=True))
-            #    fp.close()
-            
-            print("_________________________________________")
-            print ("subj:", my_msg['subject'])
-            print ("from:", my_msg['from'])
-            print ("body:")
-            for part in my_msg.walk():  
-                #print(part.get_content_type())
-                if part.get_content_type() == 'text/plain':
-                    print (part.get_payload())
+                    if not os.path.isfile(att_path):
+                        fp = open(att_path, 'wb')
+                        fp.write(part.get_payload(decode=True))
+                        fp.close()
+                    else:
+                        print("exists")
+
+if __name__ == "__main__":
+    getReportAttachmentFromEmail()
+
             

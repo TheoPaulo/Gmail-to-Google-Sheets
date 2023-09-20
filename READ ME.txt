@@ -1,0 +1,27 @@
+
+Unexplained Behavior
+1. googleSheetsWriter did not work until SampleGoogleSheets Writer ran first.
+    This is because googleSheetsWriter could not make a token.json, but SampleGoogleSheetsWriter did
+
+Things to do
+https://www.youtube.com/watch?v=K21BSZPFIjQ&t=350s
+1. google enable imap
+2. make application specific token
+    go to google account and look up app passwords
+
+3. go to console.cloud.google.com
+4. make Gmail-to-Google-Sheets project. 
+5. Enable goole sheets api
+
+6.change att-path in GmailGetAttachmenttest to where you want the report.pdf to be
+
+
+pip install --user google-auth-oauthlib
+pip install --upgrade google-api-python-client
+
+(dont have to do these two ^ if you do this one v)
+pip install –upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+pip install pdfminer.six
+
+pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
