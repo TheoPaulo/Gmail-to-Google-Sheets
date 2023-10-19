@@ -14,7 +14,7 @@ import email
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/spreadsheets']
 
 
-def main():
+def APIgetReportAttachmentFromEmail():
     """Shows basic usage of the Gmail API.
     Lists the user's Gmail labels.
     """
@@ -42,7 +42,7 @@ def main():
         results = service.users().messages().list(userId='me', maxResults = 10, q = "subject: attachment test email newer_than:12h ").execute()
         messageIDS = results.get('messages', [])
         if not messageIDS:
-            print('No labels found.')
+            print('Email Not Found')
             return
 
         for messageID in messageIDS:
@@ -85,4 +85,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    APIgetReportAttachmentFromEmail()
