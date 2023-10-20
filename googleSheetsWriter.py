@@ -24,7 +24,7 @@ def googleSheetsWriter(infoList: list):
             credentials = flow.run_local_server(port=0)
         with open("token.json", "w") as token:
             token.write(credentials.to_json())
-    
+     
     try:
         service = build("sheets", "v4", credentials = credentials)
         sheet = service.spreadsheets()
